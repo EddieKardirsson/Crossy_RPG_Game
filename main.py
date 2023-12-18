@@ -15,19 +15,28 @@ black_colour = (0, 0, 0)  # using black colour background initially because it i
 
 game_window = pygame.display.set_mode(current_display_size)
 
-clock = pygame.time.Clock();
+clock = pygame.time.Clock()
 
-while True:
 
-    # Handle events
+def run_game_loop():
+    while True:
 
-    # Execute logic
+        # Handle events
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                return
 
-    # Update display
-    game_window.fill(black_colour)
-    pygame.display.update()
+        # Execute logic
 
-    clock.tick(60)
+        # Update display
+        game_window.fill(black_colour)
+        pygame.display.update()
+
+        clock.tick(60)
+
+
+run_game_loop()
 
 pygame.quit()
 quit()
