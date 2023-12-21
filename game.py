@@ -1,16 +1,16 @@
 import pygame
+from gameObject import GameObject
 
 
 class Game:
 
-    def __init__(self):
-        self.resolution_4k = (3840, 2160)
-        self.resolution_2k = (2560, 1440)
-        self.resolution_1080p = (1920, 1080)
-        self.resolution_720p = (1280, 720)
+    def __init__(self, resolution):
+
+        # refactored the resolution variables back to main.py
+        self.resolution = resolution
 
         # change resolution/screen size with this variable
-        self.current_display_size = self.resolution_2k
+        self.current_display_size = self.resolution
         self.center_position = (self.current_display_size[0] / 2, self.current_display_size[1] / 2)
 
         self.white_colour = (255, 255, 255)
@@ -20,26 +20,39 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        # load the background image to a variable
-        background_image = pygame.image.load("Assets/background.png")
-        # Scale the background image with the height value (lowest scaling value)
-        self.background = pygame.transform.scale(background_image, (
-            self.current_display_size[1],
-            self.current_display_size[1]))
-        # center factor to position the image to the middle.
-        self.BACKGROUND_CENTER_POS = 0.22  # After a little trial and error, this constant works perfect to center the X-position
+        self.BACKGROUND_CENTER_POS = 0.22
         self.OBJECT_SCALE_FACTOR = self.current_display_size[1] * 0.004
-
-        treasure_image = pygame.image.load("Assets/treasure.png")
-        self.treasure = pygame.transform.scale(treasure_image, (
-            treasure_image.get_width() * self.OBJECT_SCALE_FACTOR,
-            treasure_image.get_height() * self.OBJECT_SCALE_FACTOR))
         self.TREASURE_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.08)
+
+        # load the background image to a variable
+        self.background = GameObject(
+            self.current_display_size[0] * self.BACKGROUND_CENTER_POS,
+            0,
+            self.current_display_size[1],
+            self.current_display_size[1],
+            "Assets/background.png"
+        )
+
+        self.treasure = GameObject(
+            self.TREASURE_POS[0],
+            self.TREASURE_POS[1],
+            0,
+            0,
+            "Assets/treasure.png",
+            self.OBJECT_SCALE_FACTOR
+        )
+
+        # treasure_image = pygame.image.load("Assets/treasure.png")
+        # self.treasure = pygame.transform.scale(treasure_image, (
+        #     treasure_image.get_width() * self.OBJECT_SCALE_FACTOR,
+        #     treasure_image.get_height() * self.OBJECT_SCALE_FACTOR))
 
     def update_display(self):
         self.game_window.fill(self.black_colour)
-        self.game_window.blit(self.background, (self.current_display_size[0] * self.BACKGROUND_CENTER_POS, 0))
-        self.game_window.blit(self.treasure, self.TREASURE_POS)
+        # self.game_window.blit(self.background, (self.current_display_size[0] * self.BACKGROUND_CENTER_POS, 0))
+        self.game_window.blit(self.background.image, (self.background.x, self.background.y))
+        # self.game_window.blit(self.treasure, self.TREASURE_POS)
+        self.game_window.blit(self.treasure.image, (self.treasure.x, self.treasure.y))
         pygame.display.update()
 
     def run_game_loop(self):
