@@ -1,6 +1,7 @@
 import pygame
 from gameObject import GameObject
 from player import Player
+from enemy import Enemy
 
 
 class Game:
@@ -21,10 +22,15 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
+        enemy_image_path = "Assets/enemy.png"
         self.BACKGROUND_CENTER_POS = 0.22
         self.OBJECT_SCALE_FACTOR = self.current_display_size[1] * 0.004
         self.TREASURE_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.08)
         self.PLAYER_START_POS = (self.current_display_size[0] * 0.488, self.current_display_size[1] * (1 - 0.08))
+
+        self.ENEMY_X_BOUNDS = (self.current_display_size[0] * 0.28, self.current_display_size[0] * 0.72)
+
+        self.ENEMY1_START_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.70)
 
         # load the background image to a variable
         self.background = GameObject(
@@ -54,6 +60,18 @@ class Game:
             self.OBJECT_SCALE_FACTOR
         )
 
+        self.enemies = [
+            Enemy(
+                self.ENEMY1_START_POS[0],
+                self.ENEMY1_START_POS[1],
+                0,
+                0,
+                enemy_image_path,
+                5,
+                self.OBJECT_SCALE_FACTOR
+            )
+        ]
+
     def update_display(self):
         self.game_window.fill(self.black_colour)
         # self.game_window.blit(self.background, (self.current_display_size[0] * self.BACKGROUND_CENTER_POS, 0))
@@ -61,6 +79,7 @@ class Game:
         # self.game_window.blit(self.treasure, self.TREASURE_POS)
         self.game_window.blit(self.treasure.image, (self.treasure.x, self.treasure.y))
         self.game_window.blit(self.player.image, (self.player.x, self.player.y))
+        self.game_window.blit(self.enemies[0].image, (self.enemies[0].x, self.enemies[0].y))
         pygame.display.update()
 
     def run_game_loop(self):
@@ -86,6 +105,7 @@ class Game:
 
             # Execute logic
             self.player.move(player_direction, self.current_display_size[1])
+            self.enemies[0].move(self.ENEMY_X_BOUNDS)
 
             # Update display
             self.update_display()
