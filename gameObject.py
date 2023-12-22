@@ -12,10 +12,10 @@ class GameObject:
         image = pygame.image.load(image_path)
         self.scale_factor = scale_factor
         if width == 0 and height == 0:
-            width = image.get_width()
-            height = image.get_height()
-        self.image = pygame.transform.scale(image, (width * scale_factor,
-                                                    height * scale_factor))
+            width = image.get_width() * scale_factor
+            height = image.get_height() * scale_factor
+        self.image = pygame.transform.scale(image, (width,
+                                                    height))
 
         self.x = x
         self.y = y

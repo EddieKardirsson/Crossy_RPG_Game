@@ -9,7 +9,7 @@ class Player(GameObject):
         self.speed = speed
 
     def move(self, direction, max_height):
-        if (((self.y >= max_height - self.height * self.scale_factor) and (direction > 0))
+        if (((self.y >= max_height - self.height) and (direction > 0))
                 or (self.y <= 0) and (direction < 0)):
             return
         self.y += (direction * self.speed)

@@ -1,5 +1,6 @@
 from gameObject import GameObject
 
+
 class Enemy(GameObject):
 
     def __init__(self, x, y, width, height, image_path, speed, scale_factor=1):
@@ -10,7 +11,7 @@ class Enemy(GameObject):
     def move(self, boundaries):
         if self.x <= boundaries[0]:
             self.speed = abs(self.speed)
-        elif self.x >= boundaries[1] - self.width * self.scale_factor:
+        elif self.x >= boundaries[1] - self.width:
             self.speed = -self.speed
 
         self.x += self.speed

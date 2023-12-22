@@ -30,7 +30,9 @@ class Game:
 
         self.ENEMY_X_BOUNDS = (self.current_display_size[0] * 0.28, self.current_display_size[0] * 0.72)
 
-        self.ENEMY1_START_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.70)
+        self.ENEMY0_START_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.70)
+        self.ENEMY1_START_POS = (self.current_display_size[0] * 0.285, self.current_display_size[1] * 0.50)
+        self.ENEMY2_START_POS = (self.current_display_size[0] * 0.685, self.current_display_size[1] * 0.30)
 
         # load the background image to a variable
         self.background = GameObject(
@@ -62,6 +64,15 @@ class Game:
 
         self.enemies = [
             Enemy(
+                self.ENEMY0_START_POS[0],
+                self.ENEMY0_START_POS[1],
+                0,
+                0,
+                enemy_image_path,
+                5,
+                self.OBJECT_SCALE_FACTOR
+            ),
+            Enemy(
                 self.ENEMY1_START_POS[0],
                 self.ENEMY1_START_POS[1],
                 0,
@@ -69,24 +80,56 @@ class Game:
                 enemy_image_path,
                 5,
                 self.OBJECT_SCALE_FACTOR
+            ),
+            Enemy(
+                self.ENEMY2_START_POS[0],
+                self.ENEMY2_START_POS[1],
+                0,
+                0,
+                enemy_image_path,
+                5,
+                self.OBJECT_SCALE_FACTOR
             )
         ]
-
+            
     def update_display(self):
         self.game_window.fill(self.black_colour)
-        # self.game_window.blit(self.background, (self.current_display_size[0] * self.BACKGROUND_CENTER_POS, 0))
         self.game_window.blit(self.background.image, (self.background.x, self.background.y))
-        # self.game_window.blit(self.treasure, self.TREASURE_POS)
         self.game_window.blit(self.treasure.image, (self.treasure.x, self.treasure.y))
         self.game_window.blit(self.player.image, (self.player.x, self.player.y))
-        self.game_window.blit(self.enemies[0].image, (self.enemies[0].x, self.enemies[0].y))
+
+        for e in range(len(self.enemies)):
+            self.game_window.blit(self.enemies[e].image, (self.enemies[e].x, self.enemies[e].y))
+
         pygame.display.update()
+
+    def move_objects(self, player_direction):
+        self.player.move(player_direction, self.current_display_size[1])
+
+        for e in range(len(self.enemies)):
+            self.enemies[e].move(self.ENEMY_X_BOUNDS)
+
+    def check_collision(self):
+        for e in self.enemies:
+            if self.detect_collision(self.player, e):
+                return True
+
+        if self.detect_collision(self.player, self.treasure):
+            return True
+        return False
+
+    def detect_collision(self, object_1, object_2):
+        if (object_1.y < (object_2.y + object_2.height) and
+                (object_1.y + object_1.height) > object_2.y and
+                object_1.x < (object_2.x + object_2.width) and
+                (object_1.x + object_1.width) > object_2.x):
+            return True
+        return False
 
     def run_game_loop(self):
         player_direction = 0
 
         while True:
-
             # Handle events
             events = pygame.event.get()
             for event in events:
@@ -104,10 +147,13 @@ class Game:
                         player_direction = 0
 
             # Execute logic
-            self.player.move(player_direction, self.current_display_size[1])
-            self.enemies[0].move(self.ENEMY_X_BOUNDS)
+            self.move_objects(player_direction)
 
             # Update display
             self.update_display()
+
+            # Detect collision
+            if self.check_collision():
+                return
 
             self.clock.tick(60)
