@@ -1,5 +1,6 @@
 import pygame
 from gameObject import GameObject
+from player import Player
 
 
 class Game:
@@ -23,6 +24,7 @@ class Game:
         self.BACKGROUND_CENTER_POS = 0.22
         self.OBJECT_SCALE_FACTOR = self.current_display_size[1] * 0.004
         self.TREASURE_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.08)
+        self.PLAYER_START_POS = (self.current_display_size[0] * 0.488, self.current_display_size[1] * (1-0.08))
 
         # load the background image to a variable
         self.background = GameObject(
@@ -42,10 +44,15 @@ class Game:
             self.OBJECT_SCALE_FACTOR
         )
 
-        # treasure_image = pygame.image.load("Assets/treasure.png")
-        # self.treasure = pygame.transform.scale(treasure_image, (
-        #     treasure_image.get_width() * self.OBJECT_SCALE_FACTOR,
-        #     treasure_image.get_height() * self.OBJECT_SCALE_FACTOR))
+        self.player = Player(
+            self.PLAYER_START_POS[0],
+            self.PLAYER_START_POS[1],
+            0,
+            0,
+            "Assets/player.png",
+            50,
+            self.OBJECT_SCALE_FACTOR
+        )
 
     def update_display(self):
         self.game_window.fill(self.black_colour)
@@ -53,6 +60,7 @@ class Game:
         self.game_window.blit(self.background.image, (self.background.x, self.background.y))
         # self.game_window.blit(self.treasure, self.TREASURE_POS)
         self.game_window.blit(self.treasure.image, (self.treasure.x, self.treasure.y))
+        self.game_window.blit(self.player.image, (self.player.x, self.player.y))
         pygame.display.update()
 
     def run_game_loop(self):
