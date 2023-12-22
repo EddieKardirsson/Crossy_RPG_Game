@@ -24,7 +24,7 @@ class Game:
         self.BACKGROUND_CENTER_POS = 0.22
         self.OBJECT_SCALE_FACTOR = self.current_display_size[1] * 0.004
         self.TREASURE_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.08)
-        self.PLAYER_START_POS = (self.current_display_size[0] * 0.488, self.current_display_size[1] * (1-0.08))
+        self.PLAYER_START_POS = (self.current_display_size[0] * 0.488, self.current_display_size[1] * (1 - 0.08))
 
         # load the background image to a variable
         self.background = GameObject(
@@ -50,7 +50,7 @@ class Game:
             0,
             0,
             "Assets/player.png",
-            50,
+            5,
             self.OBJECT_SCALE_FACTOR
         )
 
@@ -64,6 +64,8 @@ class Game:
         pygame.display.update()
 
     def run_game_loop(self):
+        player_direction = 0
+
         while True:
 
             # Handle events
@@ -71,8 +73,19 @@ class Game:
             for event in events:
                 if event.type == pygame.QUIT:
                     return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_w or event.key == pygame.K_UP:
+                        player_direction = -1
+                    elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        player_direction = 1
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_w or event.key == pygame.K_UP:
+                        player_direction = 0
+                    elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                        player_direction = 0
 
             # Execute logic
+            self.player.move(player_direction, self.current_display_size[1])
 
             # Update display
             self.update_display()

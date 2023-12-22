@@ -10,6 +10,7 @@ class GameObject:
     #   * scale_factor is used for the other game objects to be scaled with.
     def __init__(self, x, y, width, height, image_path, scale_factor=1):
         image = pygame.image.load(image_path)
+        self.scale_factor = scale_factor
         if width == 0 and height == 0:
             width = image.get_width()
             height = image.get_height()
