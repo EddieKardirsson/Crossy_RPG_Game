@@ -8,7 +8,7 @@ resolution_2k = (2560, 1440)
 resolution_1080p = (1920, 1080)
 resolution_720p = (1280, 720)
 
-game = Game(resolution_2k)
+game = Game(resolution_720p)
 game.run_game_loop()
 
 pygame.quit()

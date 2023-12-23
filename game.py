@@ -22,7 +22,7 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        enemy_image_path = "Assets/enemy.png"
+        self.enemy_image_path = "Assets/enemy.png"
         self.BACKGROUND_CENTER_POS = 0.22
         self.OBJECT_SCALE_FACTOR = self.current_display_size[1] * 0.004
         self.TREASURE_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.08)
@@ -52,24 +52,57 @@ class Game:
             self.OBJECT_SCALE_FACTOR
         )
 
-        self.player = Player(
+        self.base_speed = 5
+        self.resolution_speed = self.get_resolution_speed()
+        self.level = 1.0
+        self.reset_map()
+
+    # even with a fixed framerate, bug appeared due to resolution size where smaller went faster while
+    # larger went slower. This function does adjust it. Not the best solution but for such a microscopic
+    # game like this one, it doesn't matter that much. At least it works! :)
+    def get_resolution_speed(self):
+        if self.resolution[1] == 720:
+            return 0
+        elif self.resolution[1] == 1080:
+            return 4
+        elif self.resolution[1] == 1440:
+            return 8
+        elif self.resolution[1] == 2160:
+            return 12
+        return 0
+
+    def reset_map(self):
+
+        self.player = self.get_player()
+        speed = self.resolution_speed + (self.level * self.base_speed)
+
+        if self.level >= 4.0:
+            self.enemies = self.get_enemies(speed, 3)
+        elif self.level >= 2.0:
+            self.enemies = self.get_enemies(speed, 2)
+        else:
+            self.enemies = self.get_enemies(speed, 1)
+
+    def get_player(self):
+        return Player(
             self.PLAYER_START_POS[0],
             self.PLAYER_START_POS[1],
             0,
             0,
             "Assets/player.png",
-            5,
+            self.base_speed + self.resolution_speed,
             self.OBJECT_SCALE_FACTOR
         )
 
-        self.enemies = [
+    def get_enemies(self, speed, index):
+        max_enemies = [
             Enemy(
                 self.ENEMY0_START_POS[0],
                 self.ENEMY0_START_POS[1],
                 0,
                 0,
-                enemy_image_path,
-                5,
+                self.enemy_image_path,
+                speed,
                 self.OBJECT_SCALE_FACTOR
             ),
             Enemy(
@@ -77,8 +110,8 @@ class Game:
                 self.ENEMY1_START_POS[1],
                 0,
                 0,
-                enemy_image_path,
-                5,
+                self.enemy_image_path,
+                speed,
                 self.OBJECT_SCALE_FACTOR
             ),
             Enemy(
@@ -86,12 +119,16 @@ class Game:
                 self.ENEMY2_START_POS[1],
                 0,
                 0,
-                enemy_image_path,
-                5,
+                self.enemy_image_path,
+                speed,
                 self.OBJECT_SCALE_FACTOR
             )
         ]
-            
+        enemies = []
+        for e in range(0, index):
+            enemies.append(max_enemies[e])
+        return enemies
+
     def update_display(self):
         self.game_window.fill(self.black_colour)
         self.game_window.blit(self.background.image, (self.background.x, self.background.y))
@@ -112,9 +149,11 @@ class Game:
     def check_collision(self):
         for e in self.enemies:
             if self.detect_collision(self.player, e):
+                self.level = 1.0
                 return True
 
         if self.detect_collision(self.player, self.treasure):
+            self.level += 0.5
             return True
         return False
 
@@ -154,6 +193,7 @@ class Game:
 
             # Detect collision
             if self.check_collision():
-                return
+                self.reset_map()
 
+    # since it's not to clear how to get delta-time, I hope this fixed tick-value will solve potential framerate issues
             self.clock.tick(60)
