@@ -28,7 +28,7 @@ class Game:
         self.TREASURE_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.08)
         self.PLAYER_START_POS = (self.current_display_size[0] * 0.488, self.current_display_size[1] * (1 - 0.08))
 
-        self.ENEMY_X_BOUNDS = (self.current_display_size[0] * 0.28, self.current_display_size[0] * 0.72)
+        self.X_BOUNDS = (self.current_display_size[0] * 0.28, self.current_display_size[0] * 0.72)
 
         self.ENEMY0_START_POS = (self.current_display_size[0] * 0.485, self.current_display_size[1] * 0.70)
         self.ENEMY1_START_POS = (self.current_display_size[0] * 0.285, self.current_display_size[1] * 0.50)
@@ -140,11 +140,13 @@ class Game:
 
         pygame.display.update()
 
-    def move_objects(self, player_direction):
-        self.player.move(player_direction, self.current_display_size[1])
+    def move_objects(self, player_direction_x, player_direction_y):
+        self.player.move(player_direction_x, player_direction_y,
+                         self.X_BOUNDS[0], self.X_BOUNDS[1],
+                         self.current_display_size[1])
 
         for e in range(len(self.enemies)):
-            self.enemies[e].move(self.ENEMY_X_BOUNDS)
+            self.enemies[e].move(self.X_BOUNDS)
 
     def check_collision(self):
         for e in self.enemies:
@@ -166,7 +168,8 @@ class Game:
         return False
 
     def run_game_loop(self):
-        player_direction = 0
+        player_direction_x = 0
+        player_direction_y = 0
 
         while True:
             # Handle events
@@ -176,17 +179,25 @@ class Game:
                     return
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
-                        player_direction = -1
+                        player_direction_y = -1
                     elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        player_direction = 1
+                        player_direction_y = 1
+                    elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        player_direction_x = -1
+                    elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                        player_direction_x = 1
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
-                        player_direction = 0
+                        player_direction_y = 0
                     elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                        player_direction = 0
+                        player_direction_y = 0
+                    elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                        player_direction_x = 0
+                    elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                        player_direction_x = 0
 
             # Execute logic
-            self.move_objects(player_direction)
+            self.move_objects(player_direction_x, player_direction_y)
 
             # Update display
             self.update_display()
